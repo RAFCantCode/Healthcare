@@ -3,30 +3,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 df = pd.read_csv("Processed_Data/cleaned_diabetic_data.csv")
 
-group = df.groupby('age_group')['hospital_days'].mean().reset_index()
-age_order = [
-    '[0-10)', '[10-20)', '[20-30)', '[30-40)', '[40-50)', 
-    '[50-60)', '[60-70)', '[70-80)', '[80-90)', '[90-100)'
-]
-
-group['age_group'] = pd.Categorical(
-    group['age_group'], 
-    categories=age_order, 
-    ordered=True
-)
-
-group_index = group.sort_values('age_group')
-
+print(df.columns)
+read_adm = df.groupby(['admission_type_desc', 'readmission_status']).size().unstack()
+adm_order = ['Emergency', 'Elective', 'Urgent']
+read_adm = read_adm.reindex(adm_order, axis=0)
+readm_order = ['<30', '>30', 'NO']
+read_adm_counts = read_adm.reindex(columns=readm_order, fill_value=0)
 plt.figure(figsize=(10,8))
-sns.barplot(
-    data = group_index,
-    x = 'age_group',
-    y = 'hospital_days',
-    hue = 'age_group',
-    palette = 'muted'
-)
-plt.title('Average Hospital Stay By Age Group')
-plt.xlabel('Age Groups')
-plt.ylabel('Average Hospital Stay')
+read_adm_counts.plot(kind='bar',stacked=False, ax=plt.gca(), color = ['darkorange', 'indianred', 'blueviolet'])
+plt.title("Readmission Counts By Admission Type")
+plt.xlabel('Type Of Admission')
+plt.ylabel('Counts')
+plt.xticks(rotation=0, ha='center')
+plt.legend(title='Readmission Status', loc='upper right')
 plt.tight_layout()
 plt.show()
