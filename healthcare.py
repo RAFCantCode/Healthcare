@@ -438,3 +438,5 @@ df.to_excel(excel_path, index=False)
 
 print(f"CSV saved to: {csv_path}")
 print(f"Excel saved to: {excel_path}")
+
+print(f"Command ran perfectly, Closing out.")
